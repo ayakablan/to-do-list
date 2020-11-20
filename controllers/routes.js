@@ -1,7 +1,7 @@
 const { Router } = require('express');
 const express = require('express');
 const router = express.Router();
-const Post = require('../modules/todolist.js');
+const Post = require('../modules/task.js');
 
 //Get all the posts
 router.get('/tasks', async (req,res) => {

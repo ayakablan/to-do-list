@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const item_schema = mongoose.Schema(
+const Task = mongoose.Schema(
     {
         task_title: {
             type: String,
@@ -16,10 +16,12 @@ const item_schema = mongoose.Schema(
         task_visibility: {
             type: String,
             defualt: 'visible'
-        }
+        },
+        label: {
 
+        }
     }
 
 );
 
-module.exports = mongoose.model('item', item_schema);
+module.exports = mongoose.model('item', Task);
