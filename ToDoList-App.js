@@ -21,9 +21,13 @@ app.get('/', (req,res) => {
 });
 
 //Import routes
-const postsRoute = require('./controllers/routes');  
+const tasksRoute = require('./controllers/task_routes');  
+const labelsRoute = require('./controllers/label_routes');  
 
 //Middleware
-app.use('/', postsRoute);
+app.use('/api/tasks', tasksRoute);
+app.use('/api/labels', labelsRoute);
 
-app.listen(3000);
+app.listen(3000, () => {
+    console.log('sever is up and ruuning!')
+});

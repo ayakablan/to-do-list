@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Label = require('./label');
 
 const Task = mongoose.Schema(
     {
@@ -17,11 +18,14 @@ const Task = mongoose.Schema(
             type: String,
             defualt: 'visible'
         },
-        label: {
-
-        }
+        labels: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: 'Label'
+            }
+        ]
     }
 
 );
 
-module.exports = mongoose.model('item', Task);
+module.exports = mongoose.model('Task', Task);
