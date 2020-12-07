@@ -50,7 +50,7 @@ router.delete('/:taskId', async (req,res) => {
     } catch (err){
         res.json({message: err});
     }
-       
+
 }); 
 
 //delete all tasks
@@ -118,8 +118,8 @@ router.patch('/task_marked/:taskId', async (req,res) => {
 //get task's labels
 router.get('/:taskId/labels', async (req,res) =>{
     try {
-        const task = await Task.findById(req.params.taskId);
-        res.json(task.labels);
+        const task = await Task.findById(req.params.taskId).populate('labels');
+        res.json(task);
     } catch(err){
         res.json({message: err});
     }
@@ -130,9 +130,22 @@ router.post('/:taskId/:labelId/add', async (req,res) => {
     try {
         const task = await Task.findById(req.params.taskId);   
         const label = await Label.findById(req.params.labelId);
-        task.labels.push(label);
-        await task.save();
-        res.json(task);     
+        Task.exists({"_id": task, "labels": label}, function(err, result) {
+            if (err) {
+                res.send(err);
+              } else {
+                if(!result){
+                    task.labels = label;
+                    label.tasks = task;
+                    task.save();
+                    label.save();
+                    res.json(task);   
+                }
+                else{
+                    res.json("label is already exists");   
+                }
+            }
+        });
     } catch(err){
         res.json({message: err});
     }
@@ -143,9 +156,22 @@ router.delete('/:taskId/:labelId/delete', async (req,res) => {
     try{
         const task = await Task.findById(req.params.taskId);
         const label = await Label.findById(req.params.labelId);
-        task.labels.pop(label);
-        await task.save();
-        res.json(task);
+        Task.exists({"_id": task, "labels": label}, function(err, result) {
+            if (err) {
+                res.send(err);
+              } else {
+                if(result){
+                    task.labels.pop(label);
+                    label.tasks.pop(task);
+                    task.save();
+                    label.save();
+                    res.json(task,label);
+                }
+                else{
+                    res.json("label does not exists");   
+                }
+            }
+        });
     }catch(err){
         res.json({message: err});
     }

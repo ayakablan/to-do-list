@@ -61,9 +61,25 @@ router.delete('/:labelId', async (req,res) => {
        
 }); 
 
+//delete all label
+router.delete('/', async (req,res) => {
+    try{
+        const deletedlabel = await Label.remove({});
+        res.json(deletedlabel);
+    } catch (err){
+        res.json({message: err});
+    }
+       
+}); 
+
 //get label tasks
 router.get('/:labelId/tasks', async (req,res) => {
-
+    try {
+        const label = await Label.findById(req.params.labelId).populate('tasks');
+        res.json(label);
+    } catch(err){
+        res.json({message: err});
+    }
 });
 
 //add task to label
@@ -76,8 +92,8 @@ router.post('/:labelId/addtask', async (req,res) => {
      });
     try {
         const label = await Label.findById(req.params.labelId);
-        label.tasks.push(newTask);
         newTask.labels = req.params.labelId;
+        label.tasks.push(newTask);
         await label.save();
         res.json(label);
         const savedTask = await newTask.save();
@@ -92,9 +108,22 @@ router.delete('/:labelId/:taskId/delete', async (req,res) => {
     try{
         const label = await Label.findById(req.params.labelId);
         const task = await Task.findById(req.params.taskId);
-        label.tasks.pop(task);
-        await label.save();
-        res.json(label);
+        Label.exists({"_id": label, "tasks": task}, function(err, result) {
+            if (err) {
+                res.send(err);
+              } else {
+                if(result){
+                    label.tasks.pop(task);
+                    task.labels.pop(label);
+                    label.save();
+                    task.save();
+                    res.json(label,task);
+                }
+                else{
+                    res.json("task does not exists");   
+                }
+            }
+        });
     }catch(err){
         res.message({message: err});
     }
