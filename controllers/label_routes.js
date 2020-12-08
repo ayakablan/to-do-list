@@ -53,6 +53,11 @@ router.patch('/edit/:labelId', async (req,res) => {
 //delete label
 router.delete('/:labelId', async (req,res) => {
     try{
+        const tasks = await Task.find();
+        for(var i=0; i<tasks.length; i++){
+            tasks[i].labels.pop(req.params.labelId);
+            tasks[i].save();
+        }
         const deletedlabel = await Label.deleteOne({_id: req.params.labelId});
         res.json(deletedlabel);
     } catch (err){
@@ -63,6 +68,11 @@ router.delete('/:labelId', async (req,res) => {
 //delete all label
 router.delete('/', async (req,res) => {
     try{
+        const tasks = await Task.find();
+        for(var i=0; i<tasks.length; i++){
+            tasks[i].labels.pop();
+            tasks[i].save();
+        }
         const deletedlabels = await Label.remove({});
         res.json(deletedlabels);
     } catch (err){

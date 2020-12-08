@@ -45,6 +45,11 @@ router.get('/:taskId', async (req,res) => {
 //delete a task
 router.delete('/:taskId', async (req,res) => {
     try{
+        const labels = await Label.find();
+        for(var i=0; i<labels.length; i++){
+            labels[i].tasks.pop(req.params.taskId);
+            labels[i].save();
+        }
         const deletedTask = await Task.deleteOne({_id: req.params.taskId});
         res.json(deletedTask);
     } catch (err){
@@ -56,8 +61,13 @@ router.delete('/:taskId', async (req,res) => {
 //delete all tasks
 router.delete('/', async (req,res) => {
     try{
-        const deletedAll = await Task.remove({});
-        res.json(deletedAll)
+        const label = await Label.find();
+        for(var i=0; i<label.length; i++){
+            label[i].tasks.pop();
+            label[i].save();
+        }
+        const deletedtasks = await Task.remove({});
+        res.json(deletedtasks)
     } catch (err){
         res.json({message: err});
     }
