@@ -21,7 +21,8 @@ const Task = mongoose.Schema(
         labels: [
             {
                 type: mongoose.Schema.Types.ObjectId,
-                ref: 'Label'
+                ref: 'Label',
+                childPath: "tasks"
             }
         ]
     }
