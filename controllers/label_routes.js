@@ -53,14 +53,6 @@ router.patch('/edit/:labelId', async (req,res) => {
 //delete label
 router.delete('/:labelId', async (req,res) => {
     try{
-        Task.pre('remove', function(next){
-            this.model('Label').update(
-                {_id: {$in: this.labels}}, 
-                {$pull: {tasks: this._id}}, 
-                {multi: true},
-                next
-            );
-        });
         const deletedlabel = await Label.deleteOne({_id: req.params.labelId});
         res.json(deletedlabel);
     } catch (err){

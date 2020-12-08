@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-
 const Task = require('./task');
 
 const Label = mongoose.Schema(
@@ -12,7 +11,6 @@ const Label = mongoose.Schema(
             {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Task',
-            childPath: "labels"
             }
         ]
     }
